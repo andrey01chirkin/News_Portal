@@ -1,0 +1,22 @@
+{% extends 'flatpages/default.html' %}
+
+{% load custom_filters %}
+
+{% block content %}
+{% if news_item %}
+    <table>
+           <tr>
+               <td>Заголовок</td>
+               <td>Дата публикации</td>
+               <td>Текст статьи</td>
+           </tr>
+           <tr>
+               <td>{{ news_item.title|censor }}</td>
+               <td>{{ news_item.created_at|date:'d.m.Y' }}</td>
+               <td>{{ news_item.content|censor }}</td>
+           </tr>
+       </table>
+{% else %}
+    <h2> Новости нет! </h2>
+{% endif %}
+{% endblock content %}

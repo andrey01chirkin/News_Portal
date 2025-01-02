@@ -1,0 +1,30 @@
+{% extends 'flatpages/default.html' %}
+
+{% load custom_filters %}
+
+{% block content %}
+<h1> Все новости </h1>
+<h3> Кол-во новостей: {{ news_list|length }} </h3>
+<!--<h3> {{ next_sale|default_if_none:"Чуть позже сообщим о распродаже!" }}-->
+<hr>
+{% if news_list %}
+    <table>
+           <tr>
+               <td>Заголовок</td>
+               <td>Дата публикации</td>
+               <td>Описание</td>
+           </tr>
+
+           {% for news in news_list %}
+           <tr>
+               <td>{{ news.title|censor }}</td>
+               <td>{{ news.created_at|date:'d.m.Y' }}</td>
+               <td>{{ news.content|censor|truncatechars:20 }}</td>
+           </tr>
+           {% endfor %}
+
+       </table>
+{% else %}
+    <h2> Новостей нет! </h2>
+{% endif %}
+{% endblock content %}
