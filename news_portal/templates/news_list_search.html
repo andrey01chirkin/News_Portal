@@ -7,6 +7,11 @@
 <h3> Кол-во новостей: {{ news_list|length }} </h3>
 <!--<h3> {{ next_sale|default_if_none:"Чуть позже сообщим о распродаже!" }}-->
 
+<form method="get">
+    {{ filterset.form.as_p }}
+    <input type="submit" value="Найти"/>
+</form>
+
 <hr>
 {% if news_list %}
     <table>

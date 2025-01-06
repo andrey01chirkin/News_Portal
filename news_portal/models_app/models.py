@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.urls import reverse
+
 
 class Author(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -20,8 +22,16 @@ class Author(models.Model):
         self.rating = post_ratings + comment_ratings + comments_on_posts_ratings
         self.save()
 
+    def __str__(self):
+        return self.user.first_name
+
+
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.name.title()
+
 
 class Post(models.Model):
     ARTICLE = 'AR'
@@ -53,6 +63,15 @@ class Post(models.Model):
 
     def __str__(self):
         return f'{self.title}: {self.content}'
+
+    # def get_absolute_url(self):
+    #     """
+    #         Возвращает URL для просмотра конкретной записи.
+    #     """
+    #     if self.post_type == self.NEWS:
+    #         return reverse('news_by_id', args=[str(self.id)])
+    #     else:
+    #         return reverse('news_by_id', args=[str(self.id)])
 
 
 class Comment(models.Model):
