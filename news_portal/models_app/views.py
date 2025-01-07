@@ -1,3 +1,5 @@
+from pprint import pprint
+
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, DeleteView, UpdateView, CreateView
 from .filters import NewsFilter
@@ -12,16 +14,22 @@ class NewsList(ListView):
     paginate_by = 10
 
 
+class NewsDetail(DetailView):
+    model = Post
+    queryset = Post.objects.filter(post_type='NW')
+    template_name = 'news_item.html'
+    context_object_name = 'news_item'
+
+
 class NewsListSearch(ListView):
     model = Post
-    queryset = Post.objects.filter(post_type='NW').order_by('-created_at')
     template_name = 'news_list_search.html'
     context_object_name = 'news_list'
-    paginate_by = 2
+    paginate_by = 10
 
     # Переопределяем функцию получения списка товаров
     def get_queryset(self):
-        queryset = super().get_queryset()
+        queryset = Post.objects.filter(post_type='NW').order_by('-created_at')
         self.filterset = NewsFilter(self.request.GET, queryset)
         return self.filterset.qs
 
@@ -29,13 +37,6 @@ class NewsListSearch(ListView):
         context = super().get_context_data(**kwargs)
         context['filterset'] = self.filterset
         return context
-
-
-class NewsDetail(DetailView):
-    model = Post
-    queryset = Post.objects.filter(post_type='NW')
-    template_name = 'news_item.html'
-    context_object_name = 'news_item'
 
 
 # Представления для новостей (News):

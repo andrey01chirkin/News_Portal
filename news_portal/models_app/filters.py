@@ -11,7 +11,7 @@ class NewsFilter(FilterSet):
         label='По заголовку'
     )
     author = django_filters.CharFilter(
-        field_name='author',
+        field_name='author__user__first_name',
         lookup_expr='iregex',
         label='По имени автора'
     )
