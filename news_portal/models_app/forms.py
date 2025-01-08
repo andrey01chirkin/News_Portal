@@ -1,13 +1,26 @@
 from django import forms
 from .models import Post
 
-class NewsForm(forms.ModelForm):
-    class Meta:
-        model = Post
-        fields = ['title', 'content', 'author', 'category']
+# class NewsForm(forms.ModelForm):
+#     class Meta:
+#         model = Post
+#         fields = ['title', 'content', 'author', 'category']
+#
+# class ArticleForm(forms.ModelForm):
+#     class Meta:
+#         model = Post
+#         fields = ['title', 'content', 'author', 'category']
 
-class ArticleForm(forms.ModelForm):
+class PostChangeForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ['title', 'content', 'author', 'category']
+        fields = ['title', 'content', 'author', 'categories']
+        labels = {
+            'title': 'Заголовок',
+            'content': 'Содержание',
+            'author': 'Автор',
+            'categories': 'Категории'
+        }
+
+
 

@@ -1,8 +1,7 @@
-from pprint import pprint
-
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, DeleteView, UpdateView, CreateView
 from .filters import NewsFilter
+from .forms import PostChangeForm
 from .models import Post
 
 
@@ -42,7 +41,7 @@ class NewsListSearch(ListView):
 # Представления для новостей (News):
 class NewsCreateView(CreateView):
     model = Post
-    fields = ['title', 'content', 'author', 'categories']
+    form_class = PostChangeForm
     template_name = 'news_create.html'
     success_url = reverse_lazy('news_list')
 
@@ -53,7 +52,7 @@ class NewsCreateView(CreateView):
 
 class NewsUpdateView(UpdateView):
     model = Post
-    fields = ['title', 'content', 'author', 'categories']
+    form_class = PostChangeForm
     template_name = 'news_edit.html'
     success_url = reverse_lazy('news_list')
 
@@ -73,7 +72,7 @@ class NewsDeleteView(DeleteView):
 # Представления для статей (Articles)
 class ArticleCreateView(CreateView):
     model = Post
-    fields = ['title', 'content', 'author', 'categories']
+    form_class = PostChangeForm
     template_name = 'article_create.html'
     success_url = reverse_lazy('news_list')
 
@@ -84,7 +83,7 @@ class ArticleCreateView(CreateView):
 
 class ArticleUpdateView(UpdateView):
     model = Post
-    fields = ['title', 'content', 'author', 'categories']
+    form_class = PostChangeForm
     template_name = 'article_edit.html'
     success_url = reverse_lazy('news_list')
 
