@@ -10,5 +10,6 @@
 - /news/<int:pk>/edit/ - редактирует новость
 - /news/<int:pk>/delete/ - удаляет новость
 - /articles/create/ - создает статью
-- /articles/<int:pk>/edit/ - редактирует статью
+- /articles/<int:pk>/edit/ - редактирует статью (если пользователь авторизован)
 - /articles/<int:pk>/delete/ - удаляет статью
+- /accounts/ - регистрация и авторизация пользователей с помощью пакета allauth
