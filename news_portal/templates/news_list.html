@@ -8,6 +8,11 @@
 <!--<h3> {{ next_sale|default_if_none:"Чуть позже сообщим о распродаже!" }}-->
 
 <hr>
+
+{% if is_not_premium %}
+<button> <a href="/sign/upgrade/"> Стать автором</a> </button>
+{% endif %}
+
 {% if news_list %}
     <table>
            <tr>

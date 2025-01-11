@@ -1,4 +1,4 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, DeleteView, UpdateView, CreateView
 from .filters import NewsFilter
@@ -12,6 +12,11 @@ class NewsList(ListView):
     template_name = 'news_list.html'
     context_object_name = 'news_list'
     paginate_by = 10
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['is_not_premium'] = not self.request.user.groups.filter(name='authors').exists()
+        return context
 
 
 class NewsDetail(DetailView):
@@ -40,7 +45,9 @@ class NewsListSearch(ListView):
 
 
 # Представления для новостей (News):
-class NewsCreateView(CreateView):
+class NewsCreateView(PermissionRequiredMixin, CreateView):
+    permission_required = ('models_app.add_post',)
+
     model = Post
     form_class = PostChangeForm
     template_name = 'news_create.html'
@@ -51,7 +58,9 @@ class NewsCreateView(CreateView):
         return super().form_valid(form)
 
 
-class NewsUpdateView(UpdateView):
+class NewsUpdateView(PermissionRequiredMixin, UpdateView):
+    permission_required = ('models_app.change_post',)
+
     model = Post
     form_class = PostChangeForm
     template_name = 'news_edit.html'
@@ -71,7 +80,9 @@ class NewsDeleteView(DeleteView):
 
 
 # Представления для статей (Articles)
-class ArticleCreateView(CreateView):
+class ArticleCreateView(PermissionRequiredMixin, CreateView):
+    permission_required = ('models_app.add_post',)
+
     model = Post
     form_class = PostChangeForm
     template_name = 'article_create.html'
@@ -82,7 +93,9 @@ class ArticleCreateView(CreateView):
         return super().form_valid(form)
 
 
-class ArticleUpdateView(LoginRequiredMixin, UpdateView):
+class ArticleUpdateView(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
+    permission_required = ('models_app.change_post',)
+
     model = Post
     form_class = PostChangeForm
     template_name = 'article_edit.html'
