@@ -1,0 +1,28 @@
+{% extends 'flatpages/default.html' %}
+
+{% block content %}
+<h1>{{ category.name }}</h1>
+
+<!-- Блок для вывода сообщений -->
+{% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li>{% if message.tags %} class="{{ message.tags }}"{% endif %}
+                {{ message }}
+            </li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+<ul>
+    {% for post in category.posts.all %}
+        <li>{{ post.title }}</li>
+    {% endfor %}
+</ul>
+
+<form action="{% url 'category_detail' category.id %}" method="post">
+    {% csrf_token %}
+    <button type="submit">Подписаться</button>
+</form>
+
+{% endblock content %}

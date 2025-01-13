@@ -1,8 +1,9 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.core.mail import send_mail
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, DetailView, DeleteView, UpdateView, CreateView
 from .filters import NewsFilter
 from .forms import PostChangeForm
@@ -138,8 +139,20 @@ class ArticleDeleteView(DeleteView):
         return Post.objects.filter(post_type=Post.ARTICLE)  # Фильтруем только статьи
 
 
+class CategoryDetailView(LoginRequiredMixin, DetailView):
+    model = Category
+    template_name = 'category_detail.html'
+    context_object_name = 'category'
+
+    def post(self, request, *args, **kwargs):
+        """Обработка подписки на категорию"""
+        category = self.get_object()
+        category.subscribers.add(request.user)  # Добавляем текущего пользователя в подписчики
+        return redirect(reverse('subscribe_to_category', args=[category.id]))
+
+
 @login_required
 def subscribe_to_category(request, category_id):
     category = get_object_or_404(Category, id=category_id)
     category.subscribers.add(request.user)
-    return redirect('/news/', category_id=category_id)
+    return HttpResponse("Вы успешно подписаны!")
