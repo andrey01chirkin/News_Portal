@@ -1,9 +1,12 @@
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.core.mail import send_mail
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, DeleteView, UpdateView, CreateView
 from .filters import NewsFilter
 from .forms import PostChangeForm
-from .models import Post
+from .models import Post, Category
 
 
 class NewsList(ListView):
@@ -55,7 +58,28 @@ class NewsCreateView(PermissionRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.post_type = Post.NEWS  # Устанавливаем тип как News
-        return super().form_valid(form)
+        response = super().form_valid(form)
+
+        # Рассылка подписчикам категорий
+        categories = form.cleaned_data.get('categories')  # Выбранные категории
+        post = form.instance  # Сохранённый пост
+
+        for category in categories:
+            for subscriber in category.subscribers.all():
+                send_mail(
+                    subject=post.title,
+                    message=f"""
+                            Здравствуй, {subscriber.username}. 
+                            Новая статья в твоём любимом разделе: {category.name}!
+
+                            Заголовок: {post.title}
+                            Краткий текст: {post.content[:50]}
+                            """,
+                    from_email='chirkin.extra@yandex.ru',
+                    recipient_list=[subscriber.email],
+                    fail_silently=False,
+                )
+        return response
 
 
 class NewsUpdateView(PermissionRequiredMixin, UpdateView):
@@ -112,3 +136,10 @@ class ArticleDeleteView(DeleteView):
 
     def get_queryset(self):
         return Post.objects.filter(post_type=Post.ARTICLE)  # Фильтруем только статьи
+
+
+@login_required
+def subscribe_to_category(request, category_id):
+    category = get_object_or_404(Category, id=category_id)
+    category.subscribers.add(request.user)
+    return redirect('/news/', category_id=category_id)

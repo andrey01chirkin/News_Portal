@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import NewsList, NewsDetail, NewsListSearch, NewsCreateView, NewsUpdateView, NewsDeleteView, \
-    ArticleCreateView, ArticleUpdateView, ArticleDeleteView
+    ArticleCreateView, ArticleUpdateView, ArticleDeleteView, subscribe_to_category
 
 urlpatterns = [
     # Новости
@@ -16,4 +16,6 @@ urlpatterns = [
     path('articles/create/', ArticleCreateView.as_view(), name='article_create'),
     path('articles/<int:pk>/edit/', ArticleUpdateView.as_view(), name='article_edit'),
     path('articles/<int:pk>/delete/', ArticleDeleteView.as_view(), name='article_delete'),
+
+    path('subscribe/<int:category_id>/', subscribe_to_category, name='subscribe_to_category'),
 ]
