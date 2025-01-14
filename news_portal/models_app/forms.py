@@ -1,5 +1,6 @@
 from django import forms
-from .models import Post
+from .models import Post, Category
+
 
 # class NewsForm(forms.ModelForm):
 #     class Meta:
@@ -22,5 +23,10 @@ class PostChangeForm(forms.ModelForm):
             'categories': 'Категории'
         }
 
+
+class SubscribeForm(forms.ModelForm):
+    class Meta:
+        model = Category
+        fields = []
 
 

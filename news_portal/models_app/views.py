@@ -1,9 +1,11 @@
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, DeleteView, UpdateView, CreateView
 from .filters import NewsFilter
 from .forms import PostChangeForm
-from .models import Post
+from .models import Post, Category
 
 
 class NewsList(ListView):
@@ -112,3 +114,10 @@ class ArticleDeleteView(DeleteView):
 
     def get_queryset(self):
         return Post.objects.filter(post_type=Post.ARTICLE)  # Фильтруем только статьи
+
+
+@login_required
+def subscribe_to_category(request, category_id):
+    category = get_object_or_404(Category, id=category_id)
+    category.subscribers.add(request.user)
+    return redirect('/news/', category_id=category_id)
