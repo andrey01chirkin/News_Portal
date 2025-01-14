@@ -1,7 +1,9 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.core.mail import send_mail
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, DetailView, DeleteView, UpdateView, CreateView
 from .filters import NewsFilter
 from .forms import PostChangeForm
@@ -57,7 +59,28 @@ class NewsCreateView(PermissionRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.post_type = Post.NEWS  # Устанавливаем тип как News
-        return super().form_valid(form)
+        response = super().form_valid(form)
+
+        # Рассылка подписчикам категорий
+        categories = form.cleaned_data.get('categories')  # Выбранные категории
+        post = form.instance  # Сохранённый пост
+
+        for category in categories:
+            for subscriber in category.subscribers.all():
+                send_mail(
+                    subject=post.title,
+                    message=f"""
+                            Здравствуй, {subscriber.username}. 
+                            Новая статья в твоём любимом разделе: {category.name}!
+
+                            Заголовок: {post.title}
+                            Краткий текст: {post.content[:50]}
+                            """,
+                    from_email='chirkin.extra@yandex.ru',
+                    recipient_list=[subscriber.email],
+                    fail_silently=False,
+                )
+        return response
 
 
 class NewsUpdateView(PermissionRequiredMixin, UpdateView):
@@ -116,8 +139,20 @@ class ArticleDeleteView(DeleteView):
         return Post.objects.filter(post_type=Post.ARTICLE)  # Фильтруем только статьи
 
 
+class CategoryDetailView(LoginRequiredMixin, DetailView):
+    model = Category
+    template_name = 'category_detail.html'
+    context_object_name = 'category'
+
+    def post(self, request, *args, **kwargs):
+        """Обработка подписки на категорию"""
+        category = self.get_object()
+        category.subscribers.add(request.user)  # Добавляем текущего пользователя в подписчики
+        return redirect(reverse('subscribe_to_category', args=[category.id]))
+
+
 @login_required
 def subscribe_to_category(request, category_id):
     category = get_object_or_404(Category, id=category_id)
     category.subscribers.add(request.user)
-    return redirect('/news/', category_id=category_id)
+    return HttpResponse("Вы успешно подписаны!")
