@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     # ... include the providers you want to enable:
     'allauth.socialaccount.providers.google',
+    'email_app'
 ]
 
 LOGIN_URL = '/accounts/login/'

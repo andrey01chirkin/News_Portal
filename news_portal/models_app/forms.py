@@ -24,9 +24,6 @@ class PostChangeForm(forms.ModelForm):
         }
 
 
-class SubscribeForm(forms.ModelForm):
-    class Meta:
-        model = Category
-        fields = []
+
 
 

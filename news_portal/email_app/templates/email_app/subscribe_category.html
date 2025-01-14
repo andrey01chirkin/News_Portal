@@ -1,0 +1,21 @@
+{% extends 'flatpages/default.html' %}
+
+{% block content %}
+<h1>{{ category.name }}</h1>
+
+<ul>
+    {% for post in news %}
+        <li>{{ post.title }}</li>
+    {% endfor %}
+</ul>
+
+{% if is_subscribed %}
+    <p style="color:red">Вы уже подписаны на эту категорию.</p>
+{% else %}
+    <form action="{% url 'category_detail' category.id %}" method="post">
+        {% csrf_token %}
+        <button type="submit">Подписаться</button>
+    </form>
+{% endif %}
+
+{% endblock content %}
