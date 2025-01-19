@@ -59,28 +59,28 @@ class NewsCreateView(PermissionRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.post_type = Post.NEWS  # Устанавливаем тип как News
-        response = super().form_valid(form)
+        return super().form_valid(form)
 
         # Рассылка подписчикам категорий
-        categories = form.cleaned_data.get('categories')  # Выбранные категории
-        post = form.instance  # Сохранённый пост
-
-        for category in categories:
-            for subscriber in category.subscribers.all():
-                send_mail(
-                    subject=post.title,
-                    message=f"""
-                            Здравствуй, {subscriber.username}. 
-                            Новая статья в твоём любимом разделе: {category.name}!
-
-                            Заголовок: {post.title}
-                            Краткий текст: {post.content[:50]}
-                            """,
-                    from_email='chirkin.extra@yandex.ru',
-                    recipient_list=[subscriber.email],
-                    fail_silently=False,
-                )
-        return response
+        # categories = form.cleaned_data.get('categories')  # Выбранные категории
+        # post = form.instance  # Сохранённый пост
+        #
+        # for category in categories:
+        #     for subscriber in category.subscribers.all():
+        #         send_mail(
+        #             subject=post.title,
+        #             message=f"""
+        #                     Здравствуй, {subscriber.username}.
+        #                     Новая статья в твоём любимом разделе: {category.name}!
+        #
+        #                     Заголовок: {post.title}
+        #                     Краткий текст: {post.content[:50]}
+        #                     """,
+        #             from_email='chirkin.extra@yandex.ru',
+        #             recipient_list=[subscriber.email],
+        #             fail_silently=False,
+        #         )
+        # return response
 
 
 class NewsUpdateView(PermissionRequiredMixin, UpdateView):

@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'django.contrib.flatpages',
     'fpages_app',
-    'models_app',
+    'models_app.apps.ModelsAppConfig',
     'django_filters',
 
     'allauth',
@@ -47,8 +47,6 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     # ... include the providers you want to enable:
     'allauth.socialaccount.providers.google',
-    'email_app',
-
     'appointment_app',
 ]
 
@@ -166,7 +164,7 @@ ACCOUNT_FORMS = {'signup': 'sign_app.models.BasicSignupForm'}
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 465
-EMAIL_HOST_USER = 'chirkin.andrey377@gmail.com'
-EMAIL_HOST_PASSWORD = 'your password'
+EMAIL_HOST_USER = 'some_email@gmail.com'
+EMAIL_HOST_PASSWORD = 'some_password'
 EMAIL_USE_SSL = True
-DEFAULT_FROM_EMAIL = 'chirkin.andrey377@gmail.com'
+DEFAULT_FROM_EMAIL = 'some_email@gmail.com'

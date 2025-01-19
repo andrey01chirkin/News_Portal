@@ -23,7 +23,7 @@ urlpatterns = [
     path('', include('models_app.urls')),
     path('sign/', include('sign_app.urls')),
     path('accounts/', include('allauth.urls')),
-    path('', include('email_app.urls')),
+    path('', include('appointment_app.urls')),
 ]
 
 
