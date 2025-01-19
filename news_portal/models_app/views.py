@@ -1,13 +1,12 @@
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.core.mail import send_mail
-from django.http import HttpResponse
-from django.shortcuts import get_object_or_404, redirect
-from django.urls import reverse_lazy, reverse
-from django.views import View
+from django.shortcuts import redirect
+from django.urls import reverse_lazy
+from django.utils.timezone import now
 from django.views.generic import ListView, DetailView, DeleteView, UpdateView, CreateView
 from .filters import NewsFilter
 from .forms import PostChangeForm
-from .models import Post, Category
+from .models import Post
 
 
 class NewsList(ListView):
@@ -58,29 +57,23 @@ class NewsCreateView(PermissionRequiredMixin, CreateView):
     success_url = reverse_lazy('news_list')
 
     def form_valid(self, form):
-        form.instance.post_type = Post.NEWS  # Устанавливаем тип как News
+        # Проверка количества новостей пользователя за текущий день
+        today = now().date()
+        news_today = Post.objects.filter(
+            author=self.request.user.author,
+            post_type=Post.NEWS,
+            created_at__date=today
+        ).count()
+
+        if news_today >= 3:
+            # Добавляем сообщение об ошибке и возвращаем пользователя на страницу
+            messages.error(self.request, 'Вы не можете публиковать более 3 новостей в сутки.')
+            return redirect('/news/')
+
+        form.instance.post_type = Post.NEWS
         return super().form_valid(form)
 
-        # Рассылка подписчикам категорий
-        # categories = form.cleaned_data.get('categories')  # Выбранные категории
-        # post = form.instance  # Сохранённый пост
-        #
-        # for category in categories:
-        #     for subscriber in category.subscribers.all():
-        #         send_mail(
-        #             subject=post.title,
-        #             message=f"""
-        #                     Здравствуй, {subscriber.username}.
-        #                     Новая статья в твоём любимом разделе: {category.name}!
-        #
-        #                     Заголовок: {post.title}
-        #                     Краткий текст: {post.content[:50]}
-        #                     """,
-        #             from_email='some_email@yandex.ru',
-        #             recipient_list=[subscriber.email],
-        #             fail_silently=False,
-        #         )
-        # return response
+
 
 
 class NewsUpdateView(PermissionRequiredMixin, UpdateView):
