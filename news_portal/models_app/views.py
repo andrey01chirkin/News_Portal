@@ -76,7 +76,7 @@ class NewsCreateView(PermissionRequiredMixin, CreateView):
         #                     Заголовок: {post.title}
         #                     Краткий текст: {post.content[:50]}
         #                     """,
-        #             from_email='chirkin.extra@yandex.ru',
+        #             from_email='some_email@yandex.ru',
         #             recipient_list=[subscriber.email],
         #             fail_silently=False,
         #         )
