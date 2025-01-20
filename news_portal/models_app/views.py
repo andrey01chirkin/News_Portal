@@ -68,7 +68,7 @@ class NewsCreateView(PermissionRequiredMixin, CreateView):
         if news_today >= 3:
             # Добавляем сообщение об ошибке и возвращаем пользователя на страницу
             messages.error(self.request, 'Вы не можете публиковать более 3 новостей в сутки.')
-            return redirect('/news/')
+            return redirect('/accounts/')
 
         form.instance.post_type = Post.NEWS
         return super().form_valid(form)
