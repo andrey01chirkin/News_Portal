@@ -1,7 +1,9 @@
-from django.db.models.signals import m2m_changed
+from django.contrib.auth.models import User
+from django.db.models.signals import m2m_changed, post_save
 from django.dispatch import receiver
 from django.core.mail import send_mail
-from .models import Post
+from .models import Post, Author
+
 
 @receiver(m2m_changed, sender=Post.categories.through)
 def notify_subscribers(sender, instance, action, **kwargs):
