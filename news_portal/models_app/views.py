@@ -6,7 +6,7 @@ from django.utils.timezone import now
 from django.views.generic import ListView, DetailView, DeleteView, UpdateView, CreateView
 from .filters import NewsFilter
 from .forms import PostChangeForm
-from .models import Post
+from .models import Post, Author
 
 
 class NewsList(ListView):
@@ -70,10 +70,9 @@ class NewsCreateView(PermissionRequiredMixin, CreateView):
             messages.error(self.request, 'Вы не можете публиковать более 3 новостей в сутки.')
             return redirect('/accounts/')
 
+        form.instance.author = Author.objects.get(user=self.request.user)
         form.instance.post_type = Post.NEWS
         return super().form_valid(form)
-
-
 
 
 class NewsUpdateView(PermissionRequiredMixin, UpdateView):
@@ -130,4 +129,3 @@ class ArticleDeleteView(DeleteView):
 
     def get_queryset(self):
         return Post.objects.filter(post_type=Post.ARTICLE)  # Фильтруем только статьи
-

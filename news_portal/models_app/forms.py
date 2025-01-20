@@ -15,11 +15,10 @@ from .models import Post, Category
 class PostChangeForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ['title', 'content', 'author', 'categories']
+        fields = ['title', 'content', 'categories']
         labels = {
             'title': 'Заголовок',
             'content': 'Содержание',
-            'author': 'Автор',
             'categories': 'Категории'
         }
 
