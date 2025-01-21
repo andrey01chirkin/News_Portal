@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     # ... include the providers you want to enable:
     'allauth.socialaccount.providers.google',
     'appointment_app',
+    'django_apscheduler',
 ]
 
 LOGIN_URL = '/accounts/login/'
@@ -164,7 +165,23 @@ ACCOUNT_FORMS = {'signup': 'sign_app.models.BasicSignupForm'}
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 465
-EMAIL_HOST_USER = 'some_email@gmail.com'
-EMAIL_HOST_PASSWORD = 'some_password'
+EMAIL_HOST_USER = 'chirkin.andrey377@gmail.com'
+EMAIL_HOST_PASSWORD = 'tbzo mxvw yosh gdrg'
 EMAIL_USE_SSL = True
-DEFAULT_FROM_EMAIL = 'some_email@gmail.com'
+DEFAULT_FROM_EMAIL = 'chirkin.andrey377@gmail.com'
+
+# Format string for displaying run time timestamps in the Django admin site. The default
+# just adds seconds to the standard Django format, which is useful for displaying the timestamps
+# for jobs that are scheduled to run on intervals of less than one minute.
+#
+# See https://docs.djangoproject.com/en/dev/ref/settings/#datetime-format for format string
+# syntax details.
+APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"
+
+# Maximum run time allowed for jobs that are triggered manually via the Django admin site, which
+# prevents admin site HTTP requests from timing out.
+#
+# Longer running jobs should probably be handed over to a background task processing library
+# that supports multiple background worker processes instead (e.g. Dramatiq, Celery, Django-RQ,
+# etc. See: https://djangopackages.org/grids/g/workers-queues-tasks/ for popular options).
+APSCHEDULER_RUN_NOW_TIMEOUT = 25  # Seconds
