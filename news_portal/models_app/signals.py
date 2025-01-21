@@ -14,7 +14,7 @@ def notify_subscribers(sender, instance, action, **kwargs):
                 send_mail(
                     subject=f"Новая новость в категории {category.name}",
                     message=f"Здравствуйте, {subscriber.username}!\
-                        \nВ категории {category.name}' появилась новая новость!\
+                        \nВ категории \"{category.name}\" появилась новая новость!\
                         \nЗаголовок: {instance.title}\
                         \nКраткое содержание: {instance.content[:50]}...",
                     from_email='chirkin.andrey377@gmail.com',
