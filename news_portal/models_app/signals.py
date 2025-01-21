@@ -16,7 +16,8 @@ def notify_subscribers(sender, instance, action, **kwargs):
                     message=f"Здравствуйте, {subscriber.username}!\
                         \nВ категории \"{category.name}\" появилась новая новость!\
                         \nЗаголовок: {instance.title}\
-                        \nКраткое содержание: {instance.content[:50]}...",
+                        \nКраткое содержание: {instance.content[:50]}...\
+                        \nhttp://127.0.0.1:8000/news/{instance.id}",
                     from_email='chirkin.andrey377@gmail.com',
                     recipient_list=[subscriber.email],
                     fail_silently=False,

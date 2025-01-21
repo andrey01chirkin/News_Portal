@@ -165,10 +165,10 @@ ACCOUNT_FORMS = {'signup': 'sign_app.models.BasicSignupForm'}
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 465
-EMAIL_HOST_USER = 'some_email@gmail.com'
-EMAIL_HOST_PASSWORD = 'some_password'
+EMAIL_HOST_USER = 'chirkin.andrey377@gmail.com'
+EMAIL_HOST_PASSWORD = 'tbzo mxvw yosh gdrg'
 EMAIL_USE_SSL = True
-DEFAULT_FROM_EMAIL = 'some_email@gmail.com'
+DEFAULT_FROM_EMAIL = 'chirkin.andrey377@gmail.com'
 
 # Format string for displaying run time timestamps in the Django admin site. The default
 # just adds seconds to the standard Django format, which is useful for displaying the timestamps
