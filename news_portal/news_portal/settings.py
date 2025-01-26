@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 import os
 from pathlib import Path
+from dotenv import load_dotenv
 
 # Build paths inside the news_portal like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -49,6 +50,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',
     'appointment_app',
     'django_apscheduler',
+    'celery_app',
 ]
 
 LOGIN_URL = '/accounts/login/'
@@ -162,13 +164,18 @@ ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 
 ACCOUNT_FORMS = {'signup': 'sign_app.models.BasicSignupForm'}
 
+load_dotenv()
+
+email = os.getenv('email')
+email_password = os.getenv('email_password')
+
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 465
-EMAIL_HOST_USER = 'some_email@gmail.com'
-EMAIL_HOST_PASSWORD = 'some_password'
+EMAIL_HOST_USER = email
+EMAIL_HOST_PASSWORD = email_password
 EMAIL_USE_SSL = True
-DEFAULT_FROM_EMAIL = 'some_email@gmail.com'
+DEFAULT_FROM_EMAIL = email
 
 # Format string for displaying run time timestamps in the Django admin site. The default
 # just adds seconds to the standard Django format, which is useful for displaying the timestamps
@@ -185,3 +192,14 @@ APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"
 # that supports multiple background worker processes instead (e.g. Dramatiq, Celery, Django-RQ,
 # etc. See: https://djangopackages.org/grids/g/workers-queues-tasks/ for popular options).
 APSCHEDULER_RUN_NOW_TIMEOUT = 25  # Seconds
+
+# celery
+redis_port = os.getenv('redis_port')
+redis_endpoint = os.getenv('redis_endpoint')
+redis_password = os.getenv('redis_password')
+
+CELERY_BROKER_URL = f'redis://:{redis_password}@{redis_endpoint}:{redis_port}'
+CELERY_RESULT_BACKEND = f'redis://:{redis_password}@{redis_endpoint}:{redis_port}'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
