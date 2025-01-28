@@ -31,12 +31,12 @@
   Модуль 22.
 - Реализована рассылка уведомлений подписчикам после создания новости с помощью Celery.
 Для этого необходимо запустить в 2-х разных терминалах команды:
-	1) python manage.py runserver
-	2) celery -A news_portal worker -l INFO --pool=solo
+	1. python manage.py runserver
+	2. celery -A news_portal worker -l INFO --pool=solo
 - Реализовать еженедельную рассылку с последними новостями (каждый понедельник в 8:00 утра) с помощью периодических задач Celery.
 Для этого необходимо запустить в 2-х разных терминалах команды:
-	1) celery -A news_portal worker -l INFO --pool=solo
-	2) celery -A news_portal beat -l INFO
+	1. celery -A news_portal worker -l INFO --pool=solo
+	2. celery -A news_portal beat -l INFO
 
 
   
