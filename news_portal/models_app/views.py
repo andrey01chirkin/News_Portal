@@ -1,4 +1,3 @@
-from datetime import datetime, timedelta
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.shortcuts import redirect
@@ -8,7 +7,7 @@ from django.views.generic import ListView, DetailView, DeleteView, UpdateView, C
 from .filters import NewsFilter
 from .forms import PostChangeForm
 from .models import Post, Author
-from celery_app.tasks import send_email_task
+from celery_app.tasks import create_news_celery
 
 
 class NewsList(ListView):
@@ -77,18 +76,7 @@ class NewsCreateView(PermissionRequiredMixin, CreateView):
         form.instance.post_type = Post.NEWS
         instance = form.save()
 
-        # Отправка уведомлений подписчикам категорий через Celery
-        for category in instance.categories.all():
-            for subscriber in category.subscribers.all():
-                send_email_task.delay(
-                    subject=f"Новая новость в категории {category.name}",
-                    message=f"Здравствуйте, {subscriber.username}!\n"
-                            f"В категории \"{category.name}\" появилась новая новость!\n"
-                            f"Заголовок: {instance.title}\n"
-                            f"Краткое содержание: {instance.content[:50]}...\n"
-                            f"http://127.0.0.1:8000/news/{instance.id}",
-                    recipient_list=[subscriber.email]
-                )
+        create_news_celery.delay(instance.pk)
         return super().form_valid(form)
 
 
