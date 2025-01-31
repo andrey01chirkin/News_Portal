@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.core.cache import cache
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.utils.timezone import now
@@ -99,6 +100,22 @@ class NewsDeleteView(DeleteView):
 
     def get_queryset(self):
         return Post.objects.filter(post_type=Post.NEWS)  # Фильтруем только новости
+
+
+class ArticleDetail(DetailView):
+    model = Post
+    queryset = Post.objects.filter(post_type='AR')
+    template_name = 'news_item.html'
+    context_object_name = 'news_item'
+
+    def get_object(self, *args, **kwargs):
+        obj = cache.get(f'article-{self.kwargs["pk"]}', None)
+
+        if not obj:
+            obj = super().get_object(queryset=self.queryset)
+            cache.set(f'article-{self.kwargs["pk"]}', obj)
+
+        return obj
 
 
 # Представления для статей (Articles)

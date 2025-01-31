@@ -1,3 +1,4 @@
+from django.core.cache import cache
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -63,6 +64,11 @@ class Post(models.Model):
 
     def __str__(self):
         return f'{self.title}: {self.content}'
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)  # сначала вызываем метод родителя, чтобы объект сохранился
+        if self.post_type == Post.ARTICLE:
+            cache.delete(f'article-{self.pk}')  # затем удаляем его из кэша, чтобы сбросить его
 
 
 class Comment(models.Model):
