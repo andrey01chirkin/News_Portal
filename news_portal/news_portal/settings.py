@@ -292,30 +292,37 @@ LOGGING = {
             'formatter': 'file_error_no_stack',
         },
     },
+
     'loggers': {
         'django': {
             'handlers': ['console', 'console_warning', 'console_error', 'file_general'],
-            'level': 'DEBUG'
+            'level': 'DEBUG',
+            'propagate': True
         },
         'django.request': {
             'handlers': ['file_error', 'mail_admins'],
-            'level': 'ERROR'
+            'level': 'ERROR',
+            'propagate': False
         },
         'django.server': {
             'handlers': ['file_error', 'mail_admins'],
-            'level': 'ERROR'
+            'level': 'ERROR',
+            'propagate': False
         },
         'django.template': {
             'handlers': ['file_error'],
-            'level': 'ERROR'
+            'level': 'ERROR',
+            'propagate': False
         },
         'django.db.backends': {
             'handlers': ['file_error'],
-            'level': 'ERROR'
+            'level': 'ERROR',
+            'propagate': False
         },
         'django.security': {
             'handlers': ['file_security'],
-            'level': 'INFO'
+            'level': 'INFO',
+            'propagate': False
         },
     }
 }
