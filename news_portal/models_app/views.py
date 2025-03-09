@@ -9,7 +9,8 @@ from .filters import NewsFilter
 from .forms import PostChangeForm
 from .models import Post, Author
 from celery_app.tasks import create_news_celery
-
+from django.utils import timezone
+import pytz
 
 class NewsList(ListView):
     model = Post
@@ -19,10 +20,27 @@ class NewsList(ListView):
     paginate_by = 10
 
     def get_context_data(self, **kwargs):
-        # printer.apply_async([10], eta = datetime.now() + timedelta(seconds=5))
         context = super().get_context_data(**kwargs)
-        context['is_not_premium'] = not self.request.user.groups.filter(name='authors').exists()
+
+        # Получаем часовой пояс из сессии
+        tzname = self.request.session.get('django_timezone', 'Europe/Moscow')
+        user_tz = pytz.timezone(tzname)
+
+        # Локализуем текущее время
+        current_time = timezone.now().astimezone(user_tz)
+
+        # Передаём данные в шаблон
+        context['current_time'] = current_time
+        context['current_hour'] = current_time.hour
+        context['timezones'] = pytz.common_timezones
+        context['selected_timezone'] = tzname  # Передаём выбранный часовой пояс
+
         return context
+
+    def post(self, request):
+        """Обрабатываем смену часового пояса."""
+        request.session['django_timezone'] = request.POST.get('timezone', 'Europe/Moscow')
+        return redirect('news_list')  # Перенаправляем пользователя обратно на список новостей
 
 
 class NewsDetail(DetailView):

@@ -1,4 +1,6 @@
 <!DOCTYPE html>
+{% load i18n %}
+{% load tz %}
 <html lang="en">
     <head>
         <meta charset="utf-8" />
@@ -11,15 +13,32 @@
         <!-- Core theme CSS (includes Bootstrap)-->
         {% load static %}
         <link href="{% static 'css/styles.css' %}" rel="stylesheet" />
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+        <style>
+            {% get_current_timezone as TIME_ZONE %}
+
+            {% timezone TIME_ZONE %}
+                {% if current_time.hour >= 19 or current_time.hour <= 7 %}
+                    body { background-color: #2c3e50; color: #ecf0f1; }
+                {% else %}
+                    body { background-color: #ecf0f1; color: #2c3e50; }
+                {% endif %}
+            {% endtimezone %}
+        </style>
     </head>
     <body>
+<!--    {% trans "Django flatpages" %}-->
+<!--    {% get_current_language as LANGUAGE_CODE %}-->
+<!--    <p>Текущий язык: {{ LANGUAGE_CODE }}</p>-->
         <!-- Responsive navbar-->
-        {% load cache %}
-            {% cache 30 header %}
+<!--        {% load cache %}-->
+<!--            {% cache 30 header %}-->
                 {% block header %}
                     <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
                         <div class="container">
-                           <a class="navbar-brand" href="#">Django flatpages</a>
+                           <a class="navbar-brand" href="#">{% trans "Django flatpages" %}</a>
                            <button class="navbar-toggler" type="button" data-toggle="collapse"
                                    data-target="#navbarResponsive"
                                    aria-controls="navbarResponsive" aria-expanded="false"
@@ -29,30 +48,69 @@
                            <div class="collapse navbar-collapse" id="navbarResponsive">
                                <ul class="navbar-nav ml-auto">
                                    <li class="nav-item active">
-                                       <a class="nav-link" href="#">Home
-                                           <span class="sr-only">(current)</span>
+                                       <a class="nav-link" href="#">
+                                           {% trans "Home (current)" %}
                                        </a>
                                    </li>
                                    <li class="nav-item">
-                                       <a class="nav-link" href="/about/">About</a>
+                                       <a class="nav-link" href="/about/">
+                                           {% trans "About" %}
+                                       </a>
                                    </li>
                                    <li class="nav-item">
-                                       <a class="nav-link" href="/contacts/">Contact</a>
+                                       <a class="nav-link" href="/contacts/">
+                                           {% trans "Contact" %}
+                                       </a>
+                                   </li>
+                                   <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            {% trans "Language" %}
+                                        </a>
+                                        <ul class="dropdown-menu" aria-labelledby="languageDropdown">
+                                            <form action="{% url 'set_language' %}" method="post">
+                                                {% csrf_token %}
+                                                <input name="next" type="hidden" value="{{ request.get_full_path }}">
+                                                <li><button type="submit" name="language" value="en" class="dropdown-item">English</button></li>
+                                                <li><button type="submit" name="language" value="ru" class="dropdown-item">Русский</button></li>
+                                            </form>
+                                        </ul>
                                    </li>
                                </ul>
                            </div>
                         </div>
                     </nav>
                 {% endblock header %}
-            {% endcache %}
+<!--            {% endcache %}-->
         <!-- Page content -->
         <div class="container">
             <div class="row">
                <div class="col-lg-12 text-center">
+                   {% load tz %}
+                    <!-- Форма для выбора часового пояса -->
+                    <form action="{% url 'news_list' %}" method="POST">
+                        {% csrf_token %}
+                        <label for="timezone">{% trans "Select your time zone:" %}</label>
+                        <select name="timezone">
+                            {% for tz in timezones %}
+                                <option value="{{ tz }}"{% if tz == selected_timezone %} selected{% endif %}>{{ tz }}</option>
+                            {% endfor %}
+                        </select>
+                        <input type="submit" value="{% trans 'Set' %}">
+                    </form>
+
+                   <!-- Отображение текущего времени в выбранном часовом поясе -->
+                    {% get_current_timezone as TIME_ZONE %}
+                    <p>{% trans "Current Time Zone:" %} {{ selected_timezone }}</p>
+                    <p>{% trans "Current Time:" %} {{ current_time|date:"d.m.Y H:i" }}</p>
+
+                    <hr>
+
                     {% block content %}
                     {% endblock content %}
                </div>
            </div>
         </div>
+    <!-- Bootstrap Bundle (включает Popper.js) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>

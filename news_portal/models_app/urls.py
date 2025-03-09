@@ -6,8 +6,10 @@ from .views import NewsList, NewsDetail, NewsListSearch, NewsCreateView, NewsUpd
 
 urlpatterns = [
     # Новости
-    path('news/', cache_page(60)(NewsList.as_view()), name='news_list'),
-    path('news/<int:pk>/', cache_page(60*5)(NewsDetail.as_view()), name='news_by_id'),
+    # path('news/', cache_page(60)(NewsList.as_view()), name='news_list'),
+    path('news/', NewsList.as_view(), name='news_list'),
+    # path('news/<int:pk>/', cache_page(60*5)(NewsDetail.as_view()), name='news_by_id'),
+    path('news/<int:pk>/', NewsDetail.as_view(), name='news_by_id'),
 
     path('news/search/', NewsListSearch.as_view(), name='news_search'),
 

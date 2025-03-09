@@ -1,14 +1,15 @@
 {% extends 'flatpages/default.html' %}
 
+{% load i18n %}
 {% load custom_filters %}
 
 {% block content %}
 {% if news_item %}
     <table>
            <tr>
-               <td>Заголовок</td>
-               <td>Дата публикации</td>
-               <td>Текст статьи</td>
+               <td>{% trans "Title" %}</td>
+               <td>{% trans "Publication Date" %}</td>
+               <td>{% trans "Content" %}</td>
            </tr>
            <tr>
                <td>{{ news_item.title|censor }}</td>
