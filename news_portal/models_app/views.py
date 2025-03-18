@@ -11,6 +11,30 @@ from .models import Post, Author
 from celery_app.tasks import create_news_celery
 from django.utils import timezone
 import pytz
+from rest_framework import viewsets, permissions
+from .serializers import NewsSerializer, ArticleSerializer
+
+class IsAuthenticatedOrReadOnly(permissions.BasePermission):
+    """Разрешает GET, HEAD, OPTIONS всем, а POST, PUT, DELETE — только авторизованным пользователям."""
+
+    def has_permission(self, request, view):
+        if request.method in permissions.SAFE_METHODS:  # GET, HEAD, OPTIONS
+            return True
+        return request.user and request.user.is_authenticated
+
+
+class NewsViewSet(viewsets.ModelViewSet):
+    queryset = Post.objects.filter(post_type='NW').order_by('-created_at')
+    serializer_class = NewsSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+
+class ArticleViewSet(viewsets.ModelViewSet):
+    queryset = Post.objects.filter(post_type='AR').order_by('-created_at')
+    serializer_class = ArticleSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+# ----------------------------------------------------------------------------
 
 class NewsList(ListView):
     model = Post

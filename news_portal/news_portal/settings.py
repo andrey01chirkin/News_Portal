@@ -52,7 +52,20 @@ INSTALLED_APPS = [
     'appointment_app',
     'django_apscheduler',
     'celery_app',
+
+    'rest_framework',
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+}
+
 
 LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = '/accounts/'  # Страница, на которую попадет пользователь после входа
